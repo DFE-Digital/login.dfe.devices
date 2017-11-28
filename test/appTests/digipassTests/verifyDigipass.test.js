@@ -92,4 +92,16 @@ describe('When verifing a digipass code', () => {
     expect(res._isJSON()).toBe(true);
     expect(JSON.parse(res._getData()).valid).toBe(false);
   });
+
+  it('then it should return not found if serial number not found for device', async () => {
+    const digipassStorage = require('./../../../src/infrastructure/deviceStorage');
+    digipassStorage.getDigipassDetails.mockReset();
+    digipassStorage.getDigipassDetails.mockReturnValue(null);
+
+    await verifyDigipass(req, res);
+
+    expect(res.statusCode).toBe(404);
+    expect(res._isJSON()).toBe(true);
+    expect(res._getData()).toBe('{"message":"No digipass device found with serial number 12345"}');
+  });
 });
