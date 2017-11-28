@@ -6,7 +6,11 @@ const getDigipassDetails = (serialNumber) => {
     codeLength: 8,
   };
 };
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }) => {
+  return Promise.resolve(null);
+};
 
 module.exports = {
   getDigipassDetails,
+  storeDigipassDetails,
 };
