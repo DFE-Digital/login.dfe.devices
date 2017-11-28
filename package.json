@@ -1,7 +1,7 @@
 {
   "name": "login.dfe.migration.admin",
   "version": "1.0.0",
-  "description": "",
+  "description": "API for managing devices and validating user entered codes for devices",
   "main": "index.js",
   "scripts": {
     "dev": "settings='./config/login.dfe.devices.dev.json' node src/index.js",
