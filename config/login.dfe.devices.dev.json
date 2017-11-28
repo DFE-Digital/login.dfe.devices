@@ -31,6 +31,9 @@
   "devices": {
     "storage": {
       "type": "static"
+    },
+    "digipass": {
+      "pkcsKey": "YOUR-PKCS-KEY-HERE"
     }
   }
 }
