@@ -27,5 +27,10 @@
   "auth":{
     "type" :"secret",
     "secret": "meringue-ignoble-singlet-placenta-bit"
+  },
+  "devices": {
+    "storage": {
+      "type": "static"
+    }
   }
 }
