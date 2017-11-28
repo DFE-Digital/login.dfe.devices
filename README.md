@@ -5,11 +5,11 @@
 API for managing devices and validating user entered codes for devices
 
 ## Contents
-• [Api Resources](#Api-Resources)
-  • [Authentication](#Authentication)
-  • [Digipass](#Digipass)
-    • [Add Digipass devices](#Add-Digipass-devices)
-    • [Verify user code](#Verify-user-code)
+- [Api Resources](#Api-Resources)
+  - [Authentication](#Authentication)
+  - [Digipass](#Digipass)
+    - [Add Digipass devices](#Add-Digipass-devices)
+    - [Verify user code](#Verify-user-code)
     
 ## Api Resources
 
