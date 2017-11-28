@@ -5,6 +5,7 @@ jest.mock('./../../../src/infrastructure/deviceStorage', () => {
     serialNumber: 12345,
     counterPosition: 123,
     secret: 'base32-test-secret',
+    codeLength: 10,
   });
   return {
     getDigipassDetails,
@@ -13,7 +14,7 @@ jest.mock('./../../../src/infrastructure/deviceStorage', () => {
 jest.mock('speakeasy', () => {
   return {
     hotp: {
-      verify: jest.fn().mockReturnValue(true),
+      verifyDelta: jest.fn().mockReturnValue({ delta: 1 }),
     },
   };
 });
@@ -63,8 +64,8 @@ describe('When verifing a digipass code', () => {
 
     const { hotp } = require('speakeasy');
 
-    expect(hotp.verify.mock.calls.length).toBe(1);
-    expect(hotp.verify.mock.calls[0][0]).toMatchObject({
+    expect(hotp.verifyDelta.mock.calls.length).toBe(1);
+    expect(hotp.verifyDelta.mock.calls[0][0]).toMatchObject({
       secret: 'base32-test-secret',
       encoding: 'base32',
       counter: 123,
@@ -83,8 +84,8 @@ describe('When verifing a digipass code', () => {
 
   it('then it should return invalid response body if code is not valid', async () => {
     const { hotp } = require('speakeasy');
-    hotp.verify.mockReset();
-    hotp.verify.mockReturnValue(false);
+    hotp.verifyDelta.mockReset();
+    hotp.verifyDelta.mockReturnValue(undefined);
 
     await verifyDigipass(req, res);
 

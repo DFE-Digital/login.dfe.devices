@@ -17,16 +17,18 @@ const action = async (req, res) => {
     }));
   }
 
-  const isValid = hotp.verify({
+  const delta = hotp.verifyDelta({
     secret: deviceDetails.secret,
     encoding: 'base32',
     counter: deviceDetails.counterPosition,
+    digits: deviceDetails.codeLength,
     token: code.toString(),
     window: 10,
   });
+  const valid = delta !== undefined;
 
   return res.contentType('json').send(JSON.stringify({
-    valid: isValid,
+    valid,
   }));
 };
 

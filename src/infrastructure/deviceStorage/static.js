@@ -3,6 +3,7 @@ const getDigipassDetails = (serialNumber) => {
     serialNumber,
     counterPosition: 0,
     secret: 'some-secret',
+    codeLength: 8,
   };
 };
 
