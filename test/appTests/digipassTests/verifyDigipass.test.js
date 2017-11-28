@@ -20,7 +20,7 @@ jest.mock('speakeasy', () => {
 
 const httpMocks = require('node-mocks-http');
 
-const verifyDigipass = require('./../../../src/app/digipass/api/verifyDigipass');
+const verifyDigipass = require('../../../src/app/digipass/verifyDigipass');
 
 describe('When verifing a digipass code', () => {
   let req;

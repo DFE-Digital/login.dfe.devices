@@ -2,7 +2,7 @@
 
 const express = require('express');
 const apiAuth = require('login.dfe.api.auth');
-const config = require('../../../infrastructure/config/index');
+const config = require('../../infrastructure/config/index');
 
 const router = express.Router({ mergeParams: true });
 

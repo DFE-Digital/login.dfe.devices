@@ -7,7 +7,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const config = require('./infrastructure/config');
-const digipass = require('./app/digipass/api/index');
+const digipass = require('./app/digipass/index');
 
 const app = express();
 
