@@ -1,6 +1,6 @@
 'use strict';
 
-jest.mock('./../../../src/app/digipass/storage', () => {
+jest.mock('./../../../src/infrastructure/deviceStorage', () => {
   const getDigipassDetails = jest.fn().mockReturnValue({
     serialNumber: 12345,
     counterPosition: 123,
@@ -52,7 +52,7 @@ describe('When verifing a digipass code', () => {
   it('then it should get digipass details for serial number', async () => {
     await verifyDigipass(req, res);
 
-    const digipassStorage = require('./../../../src/app/digipass/storage');
+    const digipassStorage = require('./../../../src/infrastructure/deviceStorage');
 
     expect(digipassStorage.getDigipassDetails.mock.calls.length).toBe(1);
     expect(digipassStorage.getDigipassDetails.mock.calls[0][0]).toBe('12345');

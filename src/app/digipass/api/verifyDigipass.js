@@ -1,4 +1,4 @@
-const storage = require('./../storage');
+const storage = require('./../../../infrastructure/deviceStorage');
 const { hotp } = require('speakeasy');
 
 const action = async (req, res) => {
