@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pskc:KeyContainer Id="Container_1" Version="1.0" xmlns:pskc="urn:ietf:params:xml:ns:keyprov:pskc" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">
+    <pskc:EncryptionKey>
+        <ds:KeyName>The-pskc-encryption-key</ds:KeyName>
+    </pskc:EncryptionKey>
+    <pskc:MACMethod Algorithm="http://www.w3.org/2000/09/xmldsig#hmac-sha1">
+        <pskc:MACKey>
+            <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+            <xenc:CipherData>
+                <xenc:CipherValue>base64-cipher-value</xenc:CipherValue>
+            </xenc:CipherData>
+        </pskc:MACKey>
+    </pskc:MACMethod>
+
+    <pskc:KeyPackage>
+        <pskc:DeviceInfo>
+            <pskc:Manufacturer>Testing co</pskc:Manufacturer>
+            <pskc:SerialNo>918273645</pskc:SerialNo>
+            <pskc:Model>UT2911</pskc:Model>
+        </pskc:DeviceInfo>
+        <pskc:CryptoModuleInfo>
+            <pskc:Id>UT2911</pskc:Id>
+        </pskc:CryptoModuleInfo>
+        <pskc:Key Id="918273645OATH" Algorithm="urn:ietf:params:xml:ns:keyprov:pskc:hotp">
+            <pskc:Issuer>Testing co</pskc:Issuer>
+            <pskc:AlgorithmParameters>
+                <pskc:Suite>HMAC-SHA1</pskc:Suite>
+                <pskc:ResponseFormat Encoding="DECIMAL" Length="8" />
+            </pskc:AlgorithmParameters>
+            <pskc:Data>
+                <pskc:Secret>
+                    <pskc:EncryptedValue>
+                        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+                        <xenc:CipherData>
+                            <xenc:CipherValue>/ccIZqJal3Qpc+ixUNlmK49ATC17YIOpvqbTFNggxqY=</xenc:CipherValue>
+                        </xenc:CipherData>
+                    </pskc:EncryptedValue>
+                    <pskc:ValueMAC>mac-value</pskc:ValueMAC>
+                </pskc:Secret>
+                <pskc:Counter>
+                    <pskc:EncryptedValue>
+                        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+                        <xenc:CipherData>
+                            <xenc:CipherValue>/ccIZqJal3Qpc+ixUNlmKx5dE54T82mK8At6yvaOE2o=</xenc:CipherValue>
+                        </xenc:CipherData>
+                    </pskc:EncryptedValue>
+                    <pskc:ValueMAC>mac-value</pskc:ValueMAC>
+                </pskc:Counter>
+            </pskc:Data>
+            <pskc:Policy>
+                <pskc:KeyUsage>OTP</pskc:KeyUsage>
+            </pskc:Policy>
+        </pskc:Key>
+    </pskc:KeyPackage>
+
+</pskc:KeyContainer>
