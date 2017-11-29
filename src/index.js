@@ -6,17 +6,21 @@ const logger = require('./infrastructure/logger');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const config = require('./infrastructure/config');
+const digipass = require('./app/digipass/index');
 
 const app = express();
-const config = require('./infrastructure/config');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(morgan('combined', { stream: fs.createWriteStream('./access.log', { flags: 'a' }) }));
 app.use(morgan('dev'));
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, 'app'));
 app.use(expressLayouts);
 app.set('layout', 'layouts/layout');
+
+app.use('/digipass', digipass());
 
 if (config.hostingEnvironment.env === 'dev') {
   app.proxy = true;
