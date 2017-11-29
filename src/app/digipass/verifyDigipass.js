@@ -27,6 +27,15 @@ const action = async (req, res) => {
   });
   const valid = delta !== undefined;
 
+  if (valid) {
+    await storage.storeDigipassDetails({
+      serialNumber: deviceDetails.serialNumber,
+      counterPosition: deviceDetails.counterPosition + delta.delta,
+      secret: deviceDetails.secret,
+      codeLength: deviceDetails.codeLength,
+    });
+  }
+
   return res.contentType('json').send(JSON.stringify({
     valid,
   }));
