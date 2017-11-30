@@ -6,6 +6,8 @@ if (type === 'static') {
   storage = require('./static');
 } else if (type === 'redis') {
   storage = require('./redis');
+} else if (type === 'keyvault') {
+  storage = require('./keyVault');
 } else {
   throw new Error(`unexpected device storage type '${type}'. Allowed types are static, redis or keyvault`);
 }
