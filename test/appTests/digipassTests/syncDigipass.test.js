@@ -21,6 +21,7 @@ describe('When verifying a digipass code', () => {
   let res;
   let digipassStorage;
   let hotp;
+  const expectedRequestCorrelationId = '68bec6ac-bdd1-4b21-8510-065dbb6f3b1b';
 
   beforeEach(() => {
     req = {
@@ -30,6 +31,12 @@ describe('When verifying a digipass code', () => {
       body: {
         code1: 11111111,
         code2: 22222222,
+      },
+      headers: {
+        'x-correlation-id': expectedRequestCorrelationId,
+      },
+      header(header) {
+        return this.headers[header];
       },
     };
 
@@ -75,6 +82,7 @@ describe('When verifying a digipass code', () => {
 
     expect(digipassStorage.getDigipassDetails.mock.calls.length).toBe(1);
     expect(digipassStorage.getDigipassDetails.mock.calls[0][0]).toBe('12345');
+    expect(digipassStorage.getDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
 
   it('then it should return not found if serial number not found for device', async () => {
@@ -253,5 +261,6 @@ describe('When verifying a digipass code', () => {
       counterPosition: 132,
       codeLength: 8,
     });
+    expect(digipassStorage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
 });

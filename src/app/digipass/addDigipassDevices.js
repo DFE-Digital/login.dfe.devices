@@ -19,10 +19,10 @@ const action = async (req, res) => {
       secret: device.secret,
       counterPosition: device.counter,
       codeLength: 8,
-    });
+    }, req.header('x-correlation-id'));
   }));
 
-  res.status(202).send();
+  return res.status(202).send();
 };
 
 module.exports = action;

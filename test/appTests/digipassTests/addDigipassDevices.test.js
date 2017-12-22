@@ -12,6 +12,7 @@ describe('when adding digipass devices to system', () => {
   let req;
   let res;
   let storage;
+  const expectedRequestCorrelationId = '68bec6ac-bdd1-4b21-8510-065dbb6f3b1b';
 
   beforeEach(() => {
     req = {
@@ -28,6 +29,12 @@ describe('when adding digipass devices to system', () => {
             counter: 202,
           },
         ],
+      },
+      headers: {
+        'x-correlation-id': expectedRequestCorrelationId,
+      },
+      header(header) {
+        return this.headers[header];
       },
     };
 
@@ -52,6 +59,8 @@ describe('when adding digipass devices to system', () => {
       counterPosition: 202,
       codeLength: 8,
     });
+    expect(storage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
+    expect(storage.storeDigipassDetails.mock.calls[1][1]).toBe(expectedRequestCorrelationId);
   });
 
   it('then it should return an accepted result', async () => {

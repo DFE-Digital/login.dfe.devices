@@ -1,6 +1,8 @@
 const KeyVault = require('azure-keyvault');
 const { AuthenticationContext } = require('adal-node');
+const logger = require('./../logger');
 const config = require('./../config');
+
 const keyVaultUri = config.devices.storage.params.uri;
 const clientId = config.devices.storage.params.clientId;
 const clientSecret = config.devices.storage.params.clientSecret;
@@ -18,7 +20,8 @@ const credentials = new KeyVault.KeyVaultCredentials((challenge, callback) => {
 });
 const client = new KeyVault.KeyVaultClient(credentials);
 
-const getDigipassDetails = async (serialNumber) => {
+const getDigipassDetails = async (serialNumber, correlationId) => {
+  logger.info(`keyVault - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
   const uri = `${keyVaultUri}secrets/Digipass-${serialNumber}`;
   const secret = await client.getSecret(uri);
   if (!secret) {
@@ -26,7 +29,8 @@ const getDigipassDetails = async (serialNumber) => {
   }
   return JSON.parse(secret.value);
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
+  logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
   const key = `Digipass-${serialNumber}`;
   const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
   await client.setSecret(keyVaultUri, key, value);
