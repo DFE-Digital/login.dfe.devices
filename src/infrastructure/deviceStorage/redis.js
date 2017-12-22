@@ -1,5 +1,6 @@
 const Redis = require('ioredis');
 const config = require('./../config');
+const logger = require('./../logger');
 
 const client = new Redis(config.devices.storage.params.connectionString);
 
@@ -15,7 +16,8 @@ const set = async (key, value) => {
   await client.set(key, value);
 };
 
-const getDigipassDetails = async (serialNumber) => {
+const getDigipassDetails = async (serialNumber, correlationId) => {
+  logger.info(`redis - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
   const key = `Digipass_${serialNumber}`;
   const data = await get(key);
   if (!data) {
@@ -24,7 +26,8 @@ const getDigipassDetails = async (serialNumber) => {
 
   return JSON.parse(data);
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
+  logger.info(`redis - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
   const key = `Digipass_${serialNumber}`;
   const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
 

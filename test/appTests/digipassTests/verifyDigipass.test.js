@@ -23,6 +23,7 @@ describe('When verifing a digipass code', () => {
   let res;
   let digipassStorage;
   let hotp;
+  const expectedRequestCorrelationId = '68bec6ac-bdd1-4b21-8510-065dbb6f3b1b';
 
   beforeEach(() => {
     req = {
@@ -31,6 +32,12 @@ describe('When verifing a digipass code', () => {
       },
       body: {
         code: 9875348,
+      },
+      headers: {
+        'x-correlation-id': expectedRequestCorrelationId,
+      },
+      header(header) {
+        return this.headers[header];
       },
     };
 
@@ -68,6 +75,7 @@ describe('When verifing a digipass code', () => {
 
     expect(digipassStorage.getDigipassDetails.mock.calls.length).toBe(1);
     expect(digipassStorage.getDigipassDetails.mock.calls[0][0]).toBe('12345');
+    expect(digipassStorage.getDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
 
   it('then it should verify code with HOTP using device details', async () => {
@@ -126,5 +134,6 @@ describe('When verifing a digipass code', () => {
       counterPosition: 126,
       codeLength: 10,
     });
+    expect(digipassStorage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
 });

@@ -13,7 +13,7 @@ const action = async (req, res) => {
     }));
   }
 
-  const deviceDetails = await storage.getDigipassDetails(serialNumber);
+  const deviceDetails = await storage.getDigipassDetails(serialNumber, req.header('x-correlation-id'));
   if (!deviceDetails) {
     return res.status(404).contentType('json').send(JSON.stringify({
       message: `No digipass device found with serial number ${serialNumber}`,
@@ -46,7 +46,7 @@ const action = async (req, res) => {
       counterPosition: code1Index + 2,
       secret: deviceDetails.secret,
       codeLength: deviceDetails.codeLength,
-    });
+    }, req.header('x-correlation-id'));
   }
 
   return res.contentType('json').send(JSON.stringify({
