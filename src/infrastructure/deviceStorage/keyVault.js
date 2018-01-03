@@ -21,7 +21,7 @@ const credentials = new KeyVault.KeyVaultCredentials((challenge, callback) => {
 const client = new KeyVault.KeyVaultClient(credentials);
 
 const getDigipassDetails = async (serialNumber, correlationId) => {
-  logger.info(`keyVault - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
+  logger.info(`keyVault - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const uri = `${keyVaultUri}secrets/Digipass-${serialNumber}`;
   const secret = await client.getSecret(uri);
   if (!secret) {
@@ -30,7 +30,7 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
   return JSON.parse(secret.value);
 };
 const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
-  logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
+  logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass-${serialNumber}`;
   const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
   await client.setSecret(keyVaultUri, key, value);
