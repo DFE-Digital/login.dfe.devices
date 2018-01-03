@@ -17,7 +17,7 @@ const set = async (key, value) => {
 };
 
 const getDigipassDetails = async (serialNumber, correlationId) => {
-  logger.info(`redis - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
+  logger.info(`redis - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass_${serialNumber}`;
   const data = await get(key);
   if (!data) {
@@ -27,7 +27,7 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
   return JSON.parse(data);
 };
 const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
-  logger.info(`redis - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`);
+  logger.info(`redis - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass_${serialNumber}`;
   const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
 
