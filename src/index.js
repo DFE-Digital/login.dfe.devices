@@ -1,13 +1,13 @@
+const config = require('./infrastructure/config');
+const logger = require('./infrastructure/logger');
 const appInsights = require('applicationinsights');
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
-const logger = require('./infrastructure/logger');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const config = require('./infrastructure/config');
 const digipass = require('./app/digipass/index');
 
 if (config.hostingEnvironment.applicationInsights) {
