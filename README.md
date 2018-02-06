@@ -67,3 +67,19 @@ content-type: application/json
   "code": "12345678"
 }
 ```
+
+#### Get all serial numbers
+
+To get a list of all serial numbers you can do the following
+
+````
+GET /digipass
+````
+
+returns:
+````
+[
+    {"serialNumber":"1111111111"},
+    {"serialNumber":"2222222222"}
+]
+````

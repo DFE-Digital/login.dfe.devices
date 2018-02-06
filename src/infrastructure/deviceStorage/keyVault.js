@@ -36,7 +36,18 @@ const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, cod
   await client.setSecret(keyVaultUri, key, value);
 };
 
+const getAllDigipass = async (correlationId) => {
+  logger.info(`keyVault - getAllDigipass for request ${correlationId}`, { correlationId });
+  const digiPassTokens = await client.getSecrets(keyVaultUri.slice(0, -1));
+  return digiPassTokens.filter((token)=>{
+    return token.id.indexOf('secrets/Digipass-') !== -1;
+  }).map((token) => {
+    return { serialNumber: token.id.replace(`${keyVaultUri}secrets/Digipass-`, '') };
+  });
+};
+
 module.exports = {
   getDigipassDetails,
   storeDigipassDetails,
+  getAllDigipass,
 };
