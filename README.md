@@ -8,6 +8,7 @@ API for managing devices and validating user entered codes for devices
 - [Api Resources](#api-resources)
   - [Authentication](#authentication)
   - [Digipass](#digipass)
+    - [Check if Digipass device exists](#check-if-digipass-device-exists)
     - [Add Digipass devices](#add-digipass-devices)
     - [Verify user code](#verify-user-code)
     
@@ -35,6 +36,13 @@ If you config setting `auth.type` is `aad` then a JWT token issued by AAD is req
 ###  Digipass
 
 This is the resource collection for Digipass devices
+
+#### Check if Digipass device exists
+You can check if a Digipass device exists in the system with a specific serial number using
+```
+GET /digipass/:serial_number
+```
+Where `:serial_number` is the serial number of the device without hyphens. A status code of 204 signifies the device exists; 404 it does not.
 
 #### Add Digipass devices
 
