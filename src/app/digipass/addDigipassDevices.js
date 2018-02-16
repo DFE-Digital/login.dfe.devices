@@ -19,6 +19,8 @@ const action = async (req, res) => {
       secret: device.secret,
       counterPosition: device.counter,
       codeLength: 8,
+      unlock1: device.unlock1,
+      unlock2: device.unlock2,
     }, req.header('x-correlation-id'));
   }));
 

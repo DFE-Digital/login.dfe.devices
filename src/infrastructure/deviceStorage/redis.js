@@ -40,10 +40,10 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
 
   return JSON.parse(data);
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 }, correlationId) => {
   logger.info(`redis - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass_${serialNumber}`;
-  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
+  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 });
 
   await set(key, value);
 };

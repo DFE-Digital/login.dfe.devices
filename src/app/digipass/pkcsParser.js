@@ -63,6 +63,8 @@ const convertXmlToDevicesModel = (xmlDoc) => {
       serialNumber: keyPackage.DeviceInfo.SerialNo,
       secret: base32.encode(decryptedSecret).toString('utf8'),
       counter: decryptedCounter.readInt32BE(0),
+      unlock1: '',
+      unlock2: '',
     };
   });
 };

@@ -37,10 +37,10 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
     throw e;
   }
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 }, correlationId) => {
   logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass-${serialNumber}`;
-  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
+  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 });
   await client.setSecret(keyVaultUri, key, value);
 };
 
