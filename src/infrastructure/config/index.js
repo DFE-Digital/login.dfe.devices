@@ -14,13 +14,15 @@ const getSettingsObject = (settings) => {
 const getSettingsFromFile = (settingsPath) => {
   if (fs.existsSync(settingsPath)) {
     const file = fs.readFileSync(settingsPath, 'utf8');
+    if (!file) {
+      return null;
+    }
     try {
       return JSON.parse(file);
     } catch (e) {
-      return null;
+      throw new Error(`Invalid config - ${e.message}`);
     }
   }
-  return null;
 };
 
 const fetchConfig = () => {
