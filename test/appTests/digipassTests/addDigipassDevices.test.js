@@ -22,11 +22,15 @@ describe('when adding digipass devices to system', () => {
             serialNumber: 1001,
             secret: 'token1Secret',
             counter: 101,
+            unlock1: 'oneunlock1',
+            unlock2: 'oneunlock2',
           },
           {
             serialNumber: 2002,
             secret: 'token2Secret',
             counter: 202,
+            unlock1: 'twounlock1',
+            unlock2: 'twounlock2',
           },
         ],
       },
@@ -52,12 +56,16 @@ describe('when adding digipass devices to system', () => {
       secret: 'token1Secret',
       counterPosition: 101,
       codeLength: 8,
+      unlock1: 'oneunlock1',
+      unlock2: 'oneunlock2',
     });
     expect(storage.storeDigipassDetails.mock.calls[1][0]).toMatchObject({
       serialNumber: 2002,
       secret: 'token2Secret',
       counterPosition: 202,
       codeLength: 8,
+      unlock1: 'twounlock1',
+      unlock2: 'twounlock2',
     });
     expect(storage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
     expect(storage.storeDigipassDetails.mock.calls[1][1]).toBe(expectedRequestCorrelationId);
