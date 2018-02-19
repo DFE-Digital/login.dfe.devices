@@ -18,6 +18,8 @@ describe('when checking if a digipass exists with a serial number', () => {
       params: {
         serial_number: '112345671',
       },
+      query: {
+      },
     };
 
     res = httpMocks.createResponse();
@@ -28,9 +30,12 @@ describe('when checking if a digipass exists with a serial number', () => {
       counterPosition: 0,
       secret: 'some-secret',
       codeLength: 8,
+      unlock1: '123456',
     });
   });
-
+  afterEach(() => {
+    expect(res._isEndCalled()).toBe(true);
+  });
   it('then it should get device details using serial number from params', async () => {
     await checkDeviceExists(req, res);
 
@@ -43,7 +48,6 @@ describe('when checking if a digipass exists with a serial number', () => {
     await checkDeviceExists(req, res);
 
     expect(res.statusCode).toBe(204);
-    expect(res._isEndCalled()).toBe(true);
   });
 
   it('then it should return 404 if device not found', async () => {
@@ -52,6 +56,14 @@ describe('when checking if a digipass exists with a serial number', () => {
     await checkDeviceExists(req, res);
 
     expect(res.statusCode).toBe(404);
-    expect(res._isEndCalled()).toBe(true);
+  });
+
+  it('then the fields will be filtered if the query string is populated and the values returned in the response', async () => {
+    req.query.fields = 'unlock1';
+
+    await checkDeviceExists(req, res);
+
+    expect(res._getData().unlock1).toBe('123456');
+    expect(res._getData().serialNumber).toBe(undefined);
   });
 });
