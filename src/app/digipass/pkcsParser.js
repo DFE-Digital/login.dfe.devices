@@ -52,9 +52,9 @@ const parseXml = (xml) => {
     });
   });
 };
-const convertXmlToDevicesModel = (xmlDoc) => {
+const convertXmlToDevicesModel = (xmlDoc, pkcsKey) => {
   const keyPackages = xmlDoc.KeyContainer.KeyPackage instanceof Array ? xmlDoc.KeyContainer.KeyPackage : [xmlDoc.KeyContainer.KeyPackage];
-  const key = Buffer.from(config.devices.digipass.pkcsKey, 'hex');
+  const key = Buffer.from(pkcsKey, 'hex');
 
   return keyPackages.map((keyPackage) => {
     const decryptedSecret = decrypt(keyPackage.Key.Data.Secret.EncryptedValue.CipherData.CipherValue, key);
@@ -69,12 +69,17 @@ const convertXmlToDevicesModel = (xmlDoc) => {
   });
 };
 
+
+const parse = async (xml, pkcsKey) => {
+  const xmlDoc = await parseXml(xml);
+  return convertXmlToDevicesModel(xmlDoc, pkcsKey);
+};
+
 const middleware = async (req, res, next) => {
   const contentType = req.headers['content-type'] || '';
   if (contentType.toLowerCase() === 'application/x-pkcs12') {
     const xml = await extractXml(req);
-    const xmlDoc = await parseXml(xml);
-    const devices = convertXmlToDevicesModel(xmlDoc);
+    const devices = await parse(xml, config.devices.digipass.pkcsKey);
 
     if (!req.body) {
       req.body = {};
@@ -83,5 +88,6 @@ const middleware = async (req, res, next) => {
   }
   next();
 };
+middleware.parser = parse;
 
 module.exports = middleware;
