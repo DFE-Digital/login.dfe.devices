@@ -21,22 +21,41 @@ const credentials = new KeyVault.KeyVaultCredentials((challenge, callback) => {
 const client = new KeyVault.KeyVaultClient(credentials);
 
 const getDigipassDetails = async (serialNumber, correlationId) => {
-  logger.info(`keyVault - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
-  const uri = `${keyVaultUri}secrets/Digipass-${serialNumber}`;
-  const secret = await client.getSecret(uri);
-  if (!secret) {
-    return null;
+  try {
+    logger.info(`keyVault - getDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
+    const uri = `${keyVaultUri}secrets/Digipass-${serialNumber}`;
+    const secret = await client.getSecret(uri);
+    if (!secret) {
+      return null;
+    }
+    return JSON.parse(secret.value);
+  } catch (e) {
+    const statusCode = e.statusCode ? e.statusCode : 500;
+    if (statusCode === 404) {
+      return null;
+    }
+    throw e;
   }
-  return JSON.parse(secret.value);
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength }, correlationId) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 }, correlationId) => {
   logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass-${serialNumber}`;
-  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength });
+  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 });
   await client.setSecret(keyVaultUri, key, value);
+};
+
+const getAllDigipass = async (correlationId) => {
+  logger.info(`keyVault - getAllDigipass for request ${correlationId}`, { correlationId });
+  const digiPassTokens = await client.getSecrets(keyVaultUri.slice(0, -1));
+  return digiPassTokens.filter((token) => {
+    return token.id.indexOf('secrets/Digipass-') !== -1;
+  }).map((token) => {
+    return { serialNumber: token.id.replace(`${keyVaultUri}secrets/Digipass-`, '') };
+  });
 };
 
 module.exports = {
   getDigipassDetails,
   storeDigipassDetails,
+  getAllDigipass,
 };

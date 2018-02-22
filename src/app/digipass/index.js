@@ -11,11 +11,19 @@ const pkcsParser = require('./pkcsParser');
 const addDigipassDevices = require('./addDigipassDevices');
 const verifyDigipass = require('./verifyDigipass');
 const syncDigipass = require('./syncDigipass');
+const getAllDeviceSerialNumbers = require('./getAllDeviceSerialNumbers');
+const checkDeviceExists = require('./checkDeviceExists');
 
 const routes = () => {
-  router.use(apiAuth(router, config));
 
+  if (config.hostingEnvironment.env !== 'dev') {
+    router.use(apiAuth(router, config));
+  }
+
+  router.get('/', getAllDeviceSerialNumbers);
   router.post('/', pkcsParser, addDigipassDevices);
+
+  router.get('/:serial_number', checkDeviceExists);
   router.post('/:serial_number/verify', verifyDigipass);
   router.post('/:serial_number/sync', syncDigipass);
 
