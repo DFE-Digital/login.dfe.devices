@@ -13,6 +13,7 @@ const verifyDigipass = require('./verifyDigipass');
 const syncDigipass = require('./syncDigipass');
 const getAllDeviceSerialNumbers = require('./getAllDeviceSerialNumbers');
 const checkDeviceExists = require('./checkDeviceExists');
+const deactivateDigipass = require('./deactivateDigipass');
 
 const routes = () => {
 
@@ -26,6 +27,7 @@ const routes = () => {
   router.get('/:serial_number', checkDeviceExists);
   router.post('/:serial_number/verify', verifyDigipass);
   router.post('/:serial_number/sync', syncDigipass);
+  router.put('/:serial_number/deactivate', deactivateDigipass);
 
   return router;
 };

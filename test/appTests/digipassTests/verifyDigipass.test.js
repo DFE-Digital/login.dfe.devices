@@ -13,6 +13,12 @@ jest.mock('speakeasy', () => {
     },
   };
 });
+jest.mock('./../../../src/infrastructure/logger', () => {
+  return {
+    warn :jest.fn(),
+  };
+});
+
 
 const httpMocks = require('node-mocks-http');
 
@@ -136,4 +142,23 @@ describe('When verifing a digipass code', () => {
     });
     expect(digipassStorage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
+
+  it('then if the token is deactivated false is returned', async () => {
+    digipassStorage.getDigipassDetails.mockReset();
+    digipassStorage.getDigipassDetails.mockReturnValue({
+      serialNumber: 12345,
+      counterPosition: 123,
+      secret: 'base32-test-secret',
+      codeLength: 10,
+      deactivated: true,
+    });
+
+    await verifyDigipass(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._isJSON()).toBe(true);
+    expect(JSON.parse(res._getData()).valid).toBe(false);
+  });
+
+
 });
