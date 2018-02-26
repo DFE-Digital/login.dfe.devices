@@ -1,5 +1,6 @@
-const storage = require('../../infrastructure/deviceStorage/index');
+const storage = require('../../infrastructure/deviceStorage');
 const { hotp } = require('speakeasy');
+const logger = require('./../../infrastructure/logger');
 
 const action = async (req, res) => {
   const serialNumber = req.params.serial_number;
@@ -14,6 +15,14 @@ const action = async (req, res) => {
   if (!deviceDetails) {
     return res.status(404).contentType('json').send(JSON.stringify({
       message: `No digipass device found with serial number ${serialNumber}`,
+    }));
+  }
+
+  if (deviceDetails.deactivated) {
+    const correlationId = req.header('x-correlation-id');
+    logger.warn(`Attempted to verify deactivated token with serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
+    return res.contentType('json').send(JSON.stringify({
+      valid: false,
     }));
   }
 
