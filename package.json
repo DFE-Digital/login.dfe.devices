@@ -37,6 +37,7 @@
     "speakeasy": "^2.0.0",
     "thirty-two": "^1.0.2",
     "winston": "^2.4.0",
+    "winston-azure-application-insights": "^1.1.1",
     "winston-redis": "^1.0.0",
     "xml2js": "^0.4.19"
   },

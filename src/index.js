@@ -1,6 +1,5 @@
 const config = require('./infrastructure/config');
 const logger = require('./infrastructure/logger');
-const appInsights = require('applicationinsights');
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressLayouts = require('express-ejs-layouts');
@@ -10,10 +9,6 @@ const fs = require('fs');
 const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
-
-if (config.hostingEnvironment.applicationInsights) {
-  appInsights.setup(config.hostingEnvironment.applicationInsights).start();
-}
 
 const app = express();
 
