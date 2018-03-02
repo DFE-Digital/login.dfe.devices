@@ -3,6 +3,7 @@
 const express = require('express');
 const apiAuth = require('login.dfe.api.auth');
 const config = require('../../infrastructure/config/index');
+const { asyncWrapper } = require('login.dfe.express-error-handling');
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,13 +22,13 @@ const routes = () => {
     router.use(apiAuth(router, config));
   }
 
-  router.get('/', getAllDeviceSerialNumbers);
-  router.post('/', pkcsParser, addDigipassDevices);
+  router.get('/', asyncWrapper(getAllDeviceSerialNumbers));
+  router.post('/', pkcsParser, asyncWrapper(addDigipassDevices));
 
-  router.get('/:serial_number', checkDeviceExists);
-  router.post('/:serial_number/verify', verifyDigipass);
-  router.post('/:serial_number/sync', syncDigipass);
-  router.put('/:serial_number/deactivate', deactivateDigipass);
+  router.get('/:serial_number', asyncWrapper(checkDeviceExists));
+  router.post('/:serial_number/verify', asyncWrapper(verifyDigipass));
+  router.post('/:serial_number/sync', asyncWrapper(syncDigipass));
+  router.put('/:serial_number/deactivate', asyncWrapper(deactivateDigipass));
 
   return router;
 };
