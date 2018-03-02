@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
+const { getErrorHandler } = require('login.dfe.express-error-handling');
 
 const app = express();
 
@@ -24,6 +25,10 @@ app.set('layout', 'layouts/layout');
 app.use('/healthcheck', healthCheck({ config }));
 
 app.use('/digipass', digipass());
+
+app.use(getErrorHandler({
+  logger,
+}));
 
 if (config.hostingEnvironment.env === 'dev') {
   app.proxy = true;
