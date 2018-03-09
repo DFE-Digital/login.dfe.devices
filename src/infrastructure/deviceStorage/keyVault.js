@@ -46,7 +46,29 @@ const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, cod
 
 const getAllDigipass = async (correlationId) => {
   logger.info(`keyVault - getAllDigipass for request ${correlationId}`, { correlationId });
-  const digiPassTokens = await client.getSecrets(keyVaultUri.slice(0, -1));
+  const pageLink = keyVaultUri.slice(0, -1);
+  const digiPassTokens = await client.getSecrets(pageLink);
+
+  let moreRecords = true;
+  let nextLink = digiPassTokens.nextLink;
+
+  while (moreRecords) {
+    const tokensPage = await client.getSecretsNext(nextLink);
+
+    if (tokensPage.length === 0) {
+      moreRecords = false;
+    }
+
+    const tokensToAdd = tokensPage.filter(token => token.id.indexOf('secrets/Digipass-undefined') === -1);
+
+    digiPassTokens.push(...tokensToAdd);
+
+    nextLink = tokensPage.nextLink;
+    if (!nextLink) {
+      moreRecords = false;
+    }
+  }
+
   return digiPassTokens.filter(token => token.id.indexOf('secrets/Digipass-') !== -1).map(token => ({ serialNumber: token.id.replace(`${keyVaultUri}secrets/Digipass-`, '') }));
 };
 
