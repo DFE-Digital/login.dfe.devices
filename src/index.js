@@ -1,19 +1,30 @@
 const config = require('./infrastructure/config');
 const logger = require('./infrastructure/logger');
-const appInsights = require('applicationinsights');
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
+const { getErrorHandler } = require('login.dfe.express-error-handling');
+const KeepAliveAgent = require('agentkeepalive');
 
-if (config.hostingEnvironment.applicationInsights) {
-  appInsights.setup(config.hostingEnvironment.applicationInsights).start();
-}
+http.GlobalAgent = new KeepAliveAgent({
+  maxSockets: 10,
+  maxFreeSockets: 2,
+  timeout: 60000,
+  keepAliveTimeout: 300000,
+});
+https.GlobalAgent = new KeepAliveAgent({
+  maxSockets: 10,
+  maxFreeSockets: 2,
+  timeout: 60000,
+  keepAliveTimeout: 300000,
+});
 
 const app = express();
 
@@ -29,6 +40,10 @@ app.set('layout', 'layouts/layout');
 app.use('/healthcheck', healthCheck({ config }));
 
 app.use('/digipass', digipass());
+
+app.use(getErrorHandler({
+  logger,
+}));
 
 if (config.hostingEnvironment.env === 'dev') {
   app.proxy = true;

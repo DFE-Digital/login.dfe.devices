@@ -37,21 +37,39 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
     throw e;
   }
 };
-const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 }, correlationId) => {
+const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2, deactivated = false, deactivatedReason = '' }, correlationId) => {
   logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass-${serialNumber}`;
-  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2 });
+  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2, deactivated, deactivatedReason });
   await client.setSecret(keyVaultUri, key, value);
 };
 
 const getAllDigipass = async (correlationId) => {
   logger.info(`keyVault - getAllDigipass for request ${correlationId}`, { correlationId });
-  const digiPassTokens = await client.getSecrets(keyVaultUri.slice(0, -1));
-  return digiPassTokens.filter((token) => {
-    return token.id.indexOf('secrets/Digipass-') !== -1;
-  }).map((token) => {
-    return { serialNumber: token.id.replace(`${keyVaultUri}secrets/Digipass-`, '') };
-  });
+  const pageLink = keyVaultUri.slice(0, -1);
+  const digiPassTokens = await client.getSecrets(pageLink);
+
+  let moreRecords = true;
+  let nextLink = digiPassTokens.nextLink;
+
+  while (moreRecords) {
+    const tokensPage = await client.getSecretsNext(nextLink);
+
+    if (tokensPage.length === 0) {
+      moreRecords = false;
+    }
+
+    const tokensToAdd = tokensPage.filter(token => token.id.indexOf('secrets/Digipass-undefined') === -1);
+
+    digiPassTokens.push(...tokensToAdd);
+
+    nextLink = tokensPage.nextLink;
+    if (!nextLink) {
+      moreRecords = false;
+    }
+  }
+
+  return digiPassTokens.filter(token => token.id.indexOf('secrets/Digipass-') !== -1).map(token => ({ serialNumber: token.id.replace(`${keyVaultUri}secrets/Digipass-`, '') }));
 };
 
 module.exports = {
