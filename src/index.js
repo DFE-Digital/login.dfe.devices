@@ -10,6 +10,14 @@ const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
 const { getErrorHandler } = require('login.dfe.express-error-handling');
+const KeepAliveAgent = require('agentkeepalive');
+
+https.GlobalAgent = new KeepAliveAgent({
+  maxSockets: 10,
+  maxFreeSockets: 2,
+  timeout: 60000,
+  keepAliveTimeout: 300000,
+});
 
 const app = express();
 
