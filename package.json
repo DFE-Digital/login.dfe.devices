@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/DFE-Digital/login.dfe.devices#readme",
   "dependencies": {
-    "adal-node": "^0.1.25",
+    "adal-node": "^0.1.28",
     "agentkeepalive": "^3.4.1",
     "applicationinsights": "^1.0.1",
     "azure-keyvault": "^2.0.1-preview",
