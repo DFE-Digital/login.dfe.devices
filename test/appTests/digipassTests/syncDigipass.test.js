@@ -99,7 +99,7 @@ describe('When verifying a digipass code', () => {
   it('then it should generate token for every step from current position to sync window if no match found', async () => {
     await syncDigipass(req, res);
 
-    expect(hotp.mock.calls.length).toBe(1000);
+    expect(hotp.mock.calls.length).toBe(2000);
     expect(hotp.mock.calls[0][0]).toMatchObject({
       secret: 'base32-test-secret',
       encoding: 'base32',
@@ -163,7 +163,7 @@ describe('When verifying a digipass code', () => {
 
     await syncDigipass(req, res);
 
-    expect(hotp.mock.calls.length).toBe(1000);
+    expect(hotp.mock.calls.length).toBe(2000);
     expect(hotp.mock.calls[0][0]).toMatchObject({
       secret: 'base32-test-secret',
       encoding: 'base32',
