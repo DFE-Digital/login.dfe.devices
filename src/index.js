@@ -14,16 +14,16 @@ const { getErrorHandler } = require('login.dfe.express-error-handling');
 const KeepAliveAgent = require('agentkeepalive');
 
 http.GlobalAgent = new KeepAliveAgent({
-  maxSockets: 160,
-  maxFreeSockets: 10,
-  timeout: 60000,
-  keepAliveTimeout: 300000,
+  maxSockets: config.hostingEnvironment.agentKeepAlive.maxSockets,
+  maxFreeSockets: config.hostingEnvironment.agentKeepAlive.maxFreeSockets,
+  timeout: config.hostingEnvironment.agentKeepAlive.timeout,
+  keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
 });
 https.GlobalAgent = new KeepAliveAgent({
-  maxSockets: 160,
-  maxFreeSockets: 10,
-  timeout: 60000,
-  keepAliveTimeout: 300000,
+  maxSockets: config.hostingEnvironment.agentKeepAlive.maxSockets,
+  maxFreeSockets: config.hostingEnvironment.agentKeepAlive.maxFreeSockets,
+  timeout: config.hostingEnvironment.agentKeepAlive.timeout,
+  keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
 });
 
 const app = express();
