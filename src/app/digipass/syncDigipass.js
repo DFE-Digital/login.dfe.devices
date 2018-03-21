@@ -1,7 +1,7 @@
 const storage = require('../../infrastructure/deviceStorage/index');
 const { hotp } = require('speakeasy');
 
-const syncWindowSize = 1000;
+const syncWindowSize = 2000;
 
 const action = async (req, res) => {
   const serialNumber = req.params.serial_number;

@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/DFE-Digital/login.dfe.devices#readme",
   "dependencies": {
-    "adal-node": "^0.1.25",
+    "adal-node": "^0.1.28",
+    "agentkeepalive": "^3.4.1",
     "applicationinsights": "^1.0.1",
     "azure-keyvault": "^2.0.1-preview",
     "body": "^5.1.0",
@@ -33,7 +34,7 @@
     "lodash": "^4.17.4",
     "login.dfe.api.auth": "github:DFE-Digital/login.dfe.api.auth#v1.0.0",
     "login.dfe.express-error-handling": "git+https://github.com/DFE-Digital/login.dfe.express-error-handling.git#v1.2",
-    "login.dfe.healthcheck": "git+https://github.com/DFE-Digital/login.dfe.healthcheck.git#v1.3",
+    "login.dfe.healthcheck": "git+https://github.com/DFE-Digital/login.dfe.healthcheck.git#v1.4",
     "morgan": "^1.9.0",
     "speakeasy": "^2.0.0",
     "thirty-two": "^1.0.2",
