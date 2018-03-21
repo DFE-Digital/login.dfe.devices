@@ -119,8 +119,31 @@ const getKeyVaultClient = (settings) => {
 };
 const uploadDevice = async (device, kvClient, settings) => {
   const key = `Digipass-${device.serialNumber}`;
-  const value = JSON.stringify(device);
-  console.info(`Uploading ${device.serialNumber}`);
+
+  let existing;
+  try {
+    existing = await kvClient.getSecret(`${settings.keyVault.uri}secrets/${key}`);
+  } catch (e) {
+    if (e.code !== 'SecretNotFound') {
+      throw e;
+    }
+  }
+  if (existing && settings.overwriteHandling.toLowerCase() === 'skip') {
+    const e = new Error('Skipped as device already exists in key-vault');
+    e.dontRetry = true;
+    throw e;
+  }
+
+  let toUpload = device;
+  if (existing && settings.overwriteHandling.toLowerCase() === 'upsert') {
+    const upserted = JSON.parse(existing.value);
+    upserted.unlock1 = device.unlock1;
+    upserted.unlock2 = device.unlock2;
+    toUpload = upserted;
+  }
+
+  const value = JSON.stringify(toUpload);
+  console.info(`Uploading ${toUpload.serialNumber}`);
   await kvClient.setSecret(settings.keyVault.uri, key, value);
 };
 const process = async (devices, unlockCodes, settings) => {
@@ -131,11 +154,21 @@ const process = async (devices, unlockCodes, settings) => {
     const next = queue.shift();
     try {
       await uploadDevice(next.device, kvClient, settings);
+
+      if (!next.device.unlock1 || next.device.unlock1.trim().length === 0) {
+        failedSerialNumbers.push({
+          serialNumber: next.device.serialNumber,
+          reason: 'Missing unlock codes',
+        });
+      }
     } catch (e) {
       next.attempts++;
       console.warn(`Error uploading ${next.device.serialNumber} on attempt ${next.attempts}: ${e.message}`);
-      if (next.attempts >= settings.queue.retryAttempts) {
-        failedSerialNumbers.push(next.device.serialNumber);
+      if (e.dontRetry || next.attempts >= settings.queue.retryAttempts) {
+        failedSerialNumbers.push({
+          serialNumber: next.device.serialNumber,
+          reason: e.message,
+        });
       } else {
         queue.push(next);
       }
