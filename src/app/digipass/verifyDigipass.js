@@ -37,12 +37,10 @@ const action = async (req, res) => {
   const valid = delta !== undefined;
 
   if (valid) {
-    await storage.storeDigipassDetails({
-      serialNumber: deviceDetails.serialNumber,
-      counterPosition: deviceDetails.counterPosition + delta.delta,
-      secret: deviceDetails.secret,
-      codeLength: deviceDetails.codeLength,
-    }, req.header('x-correlation-id'));
+    const updatedDeviceDetails = Object.assign(deviceDetails, {
+      counterPosition: deviceDetails.counterPosition + delta.delta + 1,
+    });
+    await storage.storeDigipassDetails(updatedDeviceDetails, req.header('x-correlation-id'));
   }
 
   return res.contentType('json').send(JSON.stringify({
