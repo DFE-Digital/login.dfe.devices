@@ -52,10 +52,12 @@ describe('When verifing a digipass code', () => {
     digipassStorage = require('./../../../src/infrastructure/deviceStorage');
     digipassStorage.getDigipassDetails.mockReset();
     digipassStorage.getDigipassDetails.mockReturnValue({
-      serialNumber: 12345,
+      serialNumber: "12345",
       counterPosition: 123,
       secret: 'base32-test-secret',
       codeLength: 10,
+      unlock1: '12345678',
+      unlock2: '87654321',
     });
     digipassStorage.storeDigipassDetails.mockReset();
 
@@ -135,10 +137,12 @@ describe('When verifing a digipass code', () => {
     const digipassStorage = require('./../../../src/infrastructure/deviceStorage');
     expect(digipassStorage.storeDigipassDetails.mock.calls.length).toBe(1);
     expect(digipassStorage.storeDigipassDetails.mock.calls[0][0]).toMatchObject({
-      serialNumber: 12345,
+      serialNumber: req.params.serial_number,
       secret: 'base32-test-secret',
-      counterPosition: 126,
+      counterPosition: 127,
       codeLength: 10,
+      unlock1: '12345678',
+      unlock2: '87654321',
     });
     expect(digipassStorage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
