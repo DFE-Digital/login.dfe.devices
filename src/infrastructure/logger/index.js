@@ -1,7 +1,6 @@
 'use strict';
 
 // eslint-disable-next-line no-unused-expressions
-require('winston-redis').Redis;
 const winston = require('winston');
 const config = require('./../config');
 const appInsights = require('applicationinsights');
