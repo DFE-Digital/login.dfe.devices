@@ -40,7 +40,16 @@ const getDigipassDetails = async (serialNumber, correlationId) => {
 const storeDigipassDetails = async ({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2, deactivated = false, deactivatedReason = '' }, correlationId) => {
   logger.info(`keyVault - storeDigipassDetails for serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
   const key = `Digipass-${serialNumber}`;
-  const value = JSON.stringify({ serialNumber, secret, counterPosition, codeLength, unlock1, unlock2, deactivated, deactivatedReason });
+  const value = JSON.stringify({
+    serialNumber,
+    secret,
+    counterPosition,
+    codeLength,
+    unlock1,
+    unlock2,
+    deactivated,
+    deactivatedReason
+  });
   await client.setSecret(keyVaultUri, key, value);
 };
 
@@ -49,8 +58,8 @@ const getAllDigipass = async (correlationId) => {
   const pageLink = keyVaultUri.slice(0, -1);
   const digiPassTokens = await client.getSecrets(pageLink);
 
-  let moreRecords = true;
   let nextLink = digiPassTokens.nextLink;
+  let moreRecords = nextLink && nextLink.length > 0;
 
   while (moreRecords) {
     const tokensPage = await client.getSecretsNext(nextLink);

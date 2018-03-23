@@ -1,5 +1,14 @@
 'use strict';
 
+jest.mock('./../../../src/infrastructure/config', () => {
+  return {
+    devices: {
+      digipass: {
+        syncWindow: 2000,
+      },
+    },
+  };
+});
 jest.mock('./../../../src/infrastructure/deviceStorage', () => {
   return {
     getDigipassDetails: jest.fn(),
