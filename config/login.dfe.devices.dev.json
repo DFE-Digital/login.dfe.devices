@@ -34,7 +34,8 @@
       "type": "static"
     },
     "digipass": {
-      "pkcsKey": "YOUR-PKCS-KEY-HERE"
+      "pkcsKey": "YOUR-PKCS-KEY-HERE",
+      "syncWindow": 2000
     }
   }
 }
