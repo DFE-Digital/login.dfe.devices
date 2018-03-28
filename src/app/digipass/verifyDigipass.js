@@ -32,7 +32,7 @@ const action = async (req, res) => {
     counter: deviceDetails.counterPosition,
     digits: deviceDetails.codeLength,
     token: code.toString(),
-    window: 10,
+    window: 50,
   });
   const valid = delta !== undefined;
 

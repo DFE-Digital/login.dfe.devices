@@ -97,7 +97,7 @@ describe('When verifing a digipass code', () => {
       encoding: 'base32',
       counter: 123,
       token: '9875348',
-      window: 10,
+      window: 50,
     });
   });
 
