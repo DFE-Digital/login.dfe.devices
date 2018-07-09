@@ -65,3 +65,6 @@ typings/
 .idea/watcherTasks.xml
 access.log
 tools/settings.json
+\.idea/markdown-navigator/
+
+\.idea/markdown-navigator\.xml
