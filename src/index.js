@@ -5,12 +5,12 @@ const bodyParser = require('body-parser');
 const expressLayouts = require('express-ejs-layouts');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
 const { getErrorHandler } = require('login.dfe.express-error-handling');
 const KeepAliveAgent = require('agentkeepalive');
+const cache = require('./infrastructure/cache');
 
 http.GlobalAgent = new KeepAliveAgent({
   maxSockets: config.hostingEnvironment.agentKeepAlive.maxSockets,
@@ -24,6 +24,8 @@ https.GlobalAgent = new KeepAliveAgent({
   timeout: config.hostingEnvironment.agentKeepAlive.timeout,
   keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
 });
+
+cache.build();
 
 const app = express();
 
