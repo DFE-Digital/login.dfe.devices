@@ -2,10 +2,8 @@
 
 jest.mock('./../../../src/infrastructure/config', () => {
   return {
-    devices: {
-      digipass: {
-        syncWindow: 2000,
-      },
+    digipass: {
+      syncWindow: 2000,
     },
   };
 });

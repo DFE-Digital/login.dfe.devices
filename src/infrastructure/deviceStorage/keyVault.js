@@ -3,9 +3,9 @@ const { AuthenticationContext } = require('adal-node');
 const logger = require('./../logger');
 const config = require('./../config');
 
-const keyVaultUri = config.devices.storage.params.uri;
-const clientId = config.devices.storage.params.clientId;
-const clientSecret = config.devices.storage.params.clientSecret;
+const keyVaultUri = config.secureStorage.params.uri;
+const clientId = config.secureStorage.params.clientId;
+const clientSecret = config.secureStorage.params.clientSecret;
 
 const credentials = new KeyVault.KeyVaultCredentials((challenge, callback) => {
   const context = new AuthenticationContext(challenge.authorization);
