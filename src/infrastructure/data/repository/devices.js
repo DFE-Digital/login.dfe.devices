@@ -21,7 +21,7 @@ const define = (db, schema) => {
     },
     deactivatedReason: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   }, {
     timestamps: true,

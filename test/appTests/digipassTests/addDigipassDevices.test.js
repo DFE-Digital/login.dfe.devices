@@ -2,6 +2,10 @@ jest.mock('./../../../src/infrastructure/deviceStorage', () => {
   return {
     storeDigipassDetails: jest.fn(),
   };
+});jest.mock('./../../../src/infrastructure/data', () => {
+  return {
+    storeDevice: jest.fn(),
+  };
 });
 
 const httpMocks = require('node-mocks-http');
@@ -12,6 +16,7 @@ describe('when adding digipass devices to system', () => {
   let req;
   let res;
   let storage;
+  let data;
   const expectedRequestCorrelationId = '68bec6ac-bdd1-4b21-8510-065dbb6f3b1b';
 
   beforeEach(() => {
@@ -45,6 +50,8 @@ describe('when adding digipass devices to system', () => {
     res = httpMocks.createResponse();
 
     storage = require('./../../../src/infrastructure/deviceStorage');
+
+    data = require('./../../../src/infrastructure/data');
   });
 
   it('then it should store the all devices in storage', async () => {
@@ -69,6 +76,14 @@ describe('when adding digipass devices to system', () => {
     });
     expect(storage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
     expect(storage.storeDigipassDetails.mock.calls[1][1]).toBe(expectedRequestCorrelationId);
+  });
+
+  it('then it should store the all devices in repository', async () => {
+    await addDigipassDevices(req, res);
+
+    expect(data.storeDevice).toHaveBeenCalledTimes(2);
+    expect(data.storeDevice).toHaveBeenCalledWith('digipass', 1001, undefined, undefined);
+    expect(data.storeDevice).toHaveBeenCalledWith('digipass', 2002, undefined, undefined);
   });
 
   it('then it should return an accepted result', async () => {
