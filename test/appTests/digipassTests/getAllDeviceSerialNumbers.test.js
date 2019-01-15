@@ -1,7 +1,7 @@
 'use strict';
 
-jest.mock('./../../../src/infrastructure/cache', () => ({
-  list: jest.fn(),
+jest.mock('./../../../src/infrastructure/data', () => ({
+  listDevices: jest.fn(),
 }));
 jest.mock('./../../../src/infrastructure/logger', () => ({
   info: jest.fn(),
@@ -11,14 +11,13 @@ jest.mock('./../../../src/infrastructure/logger', () => ({
 
 const httpMocks = require('node-mocks-http');
 
-const { list } = require('./../../../src/infrastructure/cache');
+const { listDevices } = require('./../../../src/infrastructure/data');
 const verifyDigipass = require('./../../../src/app/digipass/getAllDeviceSerialNumbers');
 
 describe('When getting all device serial nubmers', () => {
   let req;
   let res;
   const expectedRequestCorrelationId = 'a890337d-679a-4ee1-82b1-187770c256a7';
-  let digipassStorage;
 
   beforeEach(() => {
     req = {
@@ -36,16 +35,21 @@ describe('When getting all device serial nubmers', () => {
       },
     };
 
-    list.mockReset().mockReturnValue({
-      data: [
-        {
-          serialNumber: 12345,
-        },
-        {
-          serialNumber: 54321,
-        },
-      ],
-      lastUpdated: Date.now(),
+    listDevices.mockReset().mockReturnValue({
+      devices: [{
+        id: 'device-one',
+        type: 'test',
+        serialNumber: '12345',
+        deactivated: false,
+        deactivatedReason: undefined,
+      }, {
+        id: 'device-two',
+        type: 'test',
+        serialNumber: '54321',
+        deactivated: false,
+        deactivatedReason: undefined,
+      }],
+      numberOfPages: 1,
     });
     res = httpMocks.createResponse();
   });
@@ -57,28 +61,15 @@ describe('When getting all device serial nubmers', () => {
 
     expect(res).not.toBeNull();
     expect(res.statusCode).toBe(200);
-    expect(res._getData()).toHaveLength(2);
-    expect(list.mock.calls[0][0]).toBe('digipass');
+    expect(JSON.parse(res._getData())).toHaveLength(2);
+    expect(listDevices.mock.calls[0][0]).toBe('digipass');
   });
   it('then if there are no records an empty array is returned', async () => {
-    list.mockReturnValue([]);
+    listDevices.mockReturnValue({ devices: [], numberOfPages: 0 });
 
     await verifyDigipass(req, res);
 
     expect(res).not.toBeNull();
-    expect(res._getData().length).toBe(0);
-  });
-  it('then it should return 503 with 30s backoff if cache has not finished building', async () => {
-    list.mockReturnValue({
-      data: [],
-      lastUpdated: undefined,
-    });
-
-    await verifyDigipass(req, res);
-
-    expect(res.statusCode).toBe(503);
-    expect(res._getHeaders()).toMatchObject({
-      'Retry-After': '30',
-    });
+    expect(JSON.parse(res._getData()).length).toBe(0);
   });
 });
