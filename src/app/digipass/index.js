@@ -16,11 +16,15 @@ const getAllDeviceSerialNumbers = require('./getAllDeviceSerialNumbers');
 const checkDeviceExists = require('./checkDeviceExists');
 const deactivateDigipass = require('./deactivateDigipass');
 
+const list = require('./list');
+
 const routes = () => {
 
   if (config.hostingEnvironment.env !== 'dev') {
     router.use(apiAuth(router, config));
   }
+
+  router.get('/v2', asyncWrapper(list));
 
   router.get('/', asyncWrapper(getAllDeviceSerialNumbers));
   router.post('/', pkcsParser, asyncWrapper(addDigipassDevices));
