@@ -10,7 +10,6 @@ const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
 const { getErrorHandler } = require('login.dfe.express-error-handling');
 const KeepAliveAgent = require('agentkeepalive');
-const cache = require('./infrastructure/cache');
 const configSchema = require('./infrastructure/config/schema');
 
 configSchema.validate();
@@ -27,8 +26,6 @@ https.GlobalAgent = new KeepAliveAgent({
   timeout: config.hostingEnvironment.agentKeepAlive.timeout,
   keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
 });
-
-cache.build();
 
 const app = express();
 
