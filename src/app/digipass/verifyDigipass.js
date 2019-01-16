@@ -1,4 +1,5 @@
-const storage = require('../../infrastructure/deviceStorage');
+const { getDigipassDetails, storeDigipassDetails } = require('../../infrastructure/deviceStorage');
+const { getDeviceByTypeAndSerialNumber } = require('../../infrastructure/data');
 const { hotp } = require('speakeasy');
 const logger = require('./../../infrastructure/logger');
 
@@ -11,18 +12,25 @@ const action = async (req, res) => {
     }));
   }
 
-  const deviceDetails = await storage.getDigipassDetails(serialNumber, req.header('x-correlation-id'));
-  if (!deviceDetails) {
+  const device = await getDeviceByTypeAndSerialNumber('digipass', serialNumber);
+  if (!device) {
     return res.status(404).contentType('json').send(JSON.stringify({
       message: `No digipass device found with serial number ${serialNumber}`,
     }));
   }
 
-  if (deviceDetails.deactivated) {
+  if (device.deactivated) {
     const correlationId = req.header('x-correlation-id');
     logger.warn(`Attempted to verify deactivated token with serialNumber: ${serialNumber} for request ${correlationId}`, { correlationId });
     return res.contentType('json').send(JSON.stringify({
       valid: false,
+    }));
+  }
+
+  const deviceDetails = await getDigipassDetails(serialNumber, req.header('x-correlation-id'));
+  if (!deviceDetails) {
+    return res.status(404).contentType('json').send(JSON.stringify({
+      message: `No digipass device found with serial number ${serialNumber}`,
     }));
   }
 
@@ -40,7 +48,7 @@ const action = async (req, res) => {
     const updatedDeviceDetails = Object.assign(deviceDetails, {
       counterPosition: deviceDetails.counterPosition + delta.delta + 1,
     });
-    await storage.storeDigipassDetails(updatedDeviceDetails, req.header('x-correlation-id'));
+    await storeDigipassDetails(updatedDeviceDetails, req.header('x-correlation-id'));
   }
 
   return res.contentType('json').send(JSON.stringify({

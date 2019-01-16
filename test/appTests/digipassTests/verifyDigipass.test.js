@@ -6,6 +6,11 @@ jest.mock('./../../../src/infrastructure/deviceStorage', () => {
     storeDigipassDetails: jest.fn(),
   };
 });
+jest.mock('./../../../src/infrastructure/data', () => {
+  return {
+    getDeviceByTypeAndSerialNumber: jest.fn(),
+  };
+});
 jest.mock('speakeasy', () => {
   return {
     hotp: {
@@ -22,13 +27,14 @@ jest.mock('./../../../src/infrastructure/logger', () => {
 
 const httpMocks = require('node-mocks-http');
 
-const verifyDigipass = require('../../../src/app/digipass/verifyDigipass');
+const { getDeviceByTypeAndSerialNumber } = require('./../../../src/infrastructure/data');
+const { getDigipassDetails, storeDigipassDetails } = require('./../../../src/infrastructure/deviceStorage');
+const hotp = require('speakeasy').hotp;
+const verifyDigipass = require('./../../../src/app/digipass/verifyDigipass');
 
 describe('When verifing a digipass code', () => {
   let req;
   let res;
-  let digipassStorage;
-  let hotp;
   const expectedRequestCorrelationId = '68bec6ac-bdd1-4b21-8510-065dbb6f3b1b';
 
   beforeEach(() => {
@@ -49,19 +55,24 @@ describe('When verifing a digipass code', () => {
 
     res = httpMocks.createResponse();
 
-    digipassStorage = require('./../../../src/infrastructure/deviceStorage');
-    digipassStorage.getDigipassDetails.mockReset();
-    digipassStorage.getDigipassDetails.mockReturnValue({
-      serialNumber: "12345",
+    getDeviceByTypeAndSerialNumber.mockReset().mockReturnValue({
+      id: 'device-one',
+      type: 'digipass',
+      serialNumber: '12345',
+      deactivated: false,
+      deactivatedReason: null,
+    });
+
+    getDigipassDetails.mockReset().mockReturnValue({
+      serialNumber: '12345',
       counterPosition: 123,
       secret: 'base32-test-secret',
       codeLength: 10,
       unlock1: '12345678',
       unlock2: '87654321',
     });
-    digipassStorage.storeDigipassDetails.mockReset();
+    storeDigipassDetails.mockReset();
 
-    hotp = require('speakeasy').hotp;
     hotp.verifyDelta.mockReset();
     hotp.verifyDelta.mockReturnValue({ delta: 3 });
   });
@@ -88,8 +99,6 @@ describe('When verifing a digipass code', () => {
 
   it('then it should verify code with HOTP using device details', async () => {
     await verifyDigipass(req, res);
-
-    const { hotp } = require('speakeasy');
 
     expect(hotp.verifyDelta.mock.calls.length).toBe(1);
     expect(hotp.verifyDelta.mock.calls[0][0]).toMatchObject({
@@ -120,9 +129,18 @@ describe('When verifing a digipass code', () => {
     expect(JSON.parse(res._getData()).valid).toBe(false);
   });
 
-  it('then it should return not found if serial number not found for device', async () => {
-    digipassStorage.getDigipassDetails.mockReset();
-    digipassStorage.getDigipassDetails.mockReturnValue(null);
+  it('then it should return not found if serial number not found for device in insecure storage', async () => {
+    getDeviceByTypeAndSerialNumber.mockReturnValue(null);
+
+    await verifyDigipass(req, res);
+
+    expect(res.statusCode).toBe(404);
+    expect(res._isJSON()).toBe(true);
+    expect(res._getData()).toBe('{"message":"No digipass device found with serial number 12345"}');
+  });
+
+  it('then it should return not found if serial number not found for device in secure storage', async () => {
+    getDigipassDetails.mockReturnValue(null);
 
     await verifyDigipass(req, res);
 
@@ -134,9 +152,8 @@ describe('When verifing a digipass code', () => {
   it('then it should increment the counter by delta in storage if successful', async () => {
     await verifyDigipass(req, res);
 
-    const digipassStorage = require('./../../../src/infrastructure/deviceStorage');
-    expect(digipassStorage.storeDigipassDetails.mock.calls.length).toBe(1);
-    expect(digipassStorage.storeDigipassDetails.mock.calls[0][0]).toMatchObject({
+    expect(storeDigipassDetails.mock.calls.length).toBe(1);
+    expect(storeDigipassDetails.mock.calls[0][0]).toMatchObject({
       serialNumber: req.params.serial_number,
       secret: 'base32-test-secret',
       counterPosition: 127,
@@ -144,17 +161,16 @@ describe('When verifing a digipass code', () => {
       unlock1: '12345678',
       unlock2: '87654321',
     });
-    expect(digipassStorage.storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
+    expect(storeDigipassDetails.mock.calls[0][1]).toBe(expectedRequestCorrelationId);
   });
 
   it('then if the token is deactivated false is returned', async () => {
-    digipassStorage.getDigipassDetails.mockReset();
-    digipassStorage.getDigipassDetails.mockReturnValue({
-      serialNumber: 12345,
-      counterPosition: 123,
-      secret: 'base32-test-secret',
-      codeLength: 10,
+    getDeviceByTypeAndSerialNumber.mockReturnValue({
+      id: 'device-one',
+      type: 'digipass',
+      serialNumber: '12345',
       deactivated: true,
+      deactivatedReason: null,
     });
 
     await verifyDigipass(req, res);
