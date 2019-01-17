@@ -1,3 +1,8 @@
+jest.mock('./../../../src/infrastructure/data', () => {
+  return {
+    getDeviceByTypeAndSerialNumber: jest.fn(),
+  };
+});
 jest.mock('./../../../src/infrastructure/deviceStorage', () => {
   return {
     getDigipassDetails: jest.fn(),
@@ -5,6 +10,7 @@ jest.mock('./../../../src/infrastructure/deviceStorage', () => {
 });
 
 const httpMocks = require('node-mocks-http');
+const { getDeviceByTypeAndSerialNumber } = require('./../../../src/infrastructure/data');
 const { getDigipassDetails } = require('./../../../src/infrastructure/deviceStorage');
 const checkDeviceExists = require('./../../../src/app/digipass/checkDeviceExists');
 
@@ -18,14 +24,20 @@ describe('when checking if a digipass exists with a serial number', () => {
       params: {
         serial_number: '112345671',
       },
-      query: {
-      },
+      query: {},
     };
 
     res = httpMocks.createResponse();
 
-    getDigipassDetails.mockReset();
-    getDigipassDetails.mockReturnValue({
+    getDeviceByTypeAndSerialNumber.mockReset().mockReturnValue({
+      id: 'device1',
+      type: 'digipass',
+      serialNumber: '1212345671',
+      deactivated: false,
+      deactivatedReason: undefined,
+    });
+
+    getDigipassDetails.mockReset().mockReturnValue({
       serialNumber: '1212345671',
       counterPosition: 0,
       secret: 'some-secret',
@@ -39,9 +51,8 @@ describe('when checking if a digipass exists with a serial number', () => {
   it('then it should get device details using serial number from params', async () => {
     await checkDeviceExists(req, res);
 
-    expect(getDigipassDetails.mock.calls).toHaveLength(1);
-    expect(getDigipassDetails.mock.calls[0][0]).toBe('112345671');
-    expect(getDigipassDetails.mock.calls[0][1]).toBe('correlation-id');
+    expect(getDeviceByTypeAndSerialNumber).toHaveBeenCalledTimes(1);
+    expect(getDeviceByTypeAndSerialNumber).toHaveBeenCalledWith('digipass', '112345671');
   });
 
   it('then it should return 204 if device found', async () => {
@@ -51,7 +62,7 @@ describe('when checking if a digipass exists with a serial number', () => {
   });
 
   it('then it should return 404 if device not found', async () => {
-    getDigipassDetails.mockReturnValue(null);
+    getDeviceByTypeAndSerialNumber.mockReturnValue(undefined);
 
     await checkDeviceExists(req, res);
 
@@ -63,6 +74,8 @@ describe('when checking if a digipass exists with a serial number', () => {
 
     await checkDeviceExists(req, res);
 
+    expect(getDigipassDetails).toHaveBeenCalledTimes(1);
+    expect(getDigipassDetails).toHaveBeenCalledWith('112345671', 'correlation-id');
     expect(res._getData().unlock1).toBe('123456');
     expect(res._getData().serialNumber).toBe(undefined);
   });

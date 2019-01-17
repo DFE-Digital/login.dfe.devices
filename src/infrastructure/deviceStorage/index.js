@@ -1,11 +1,9 @@
 const config = require('./../config');
 
 let storage;
-const type = config.devices.storage.type;
+const type = config.secureStorage.type;
 if (type === 'static') {
   storage = require('./static');
-} else if (type === 'redis') {
-  storage = require('./redis');
 } else if (type === 'keyvault') {
   storage = require('./keyVault');
 } else {

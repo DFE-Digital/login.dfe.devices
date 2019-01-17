@@ -1,22 +1,17 @@
-const storage = require('../../infrastructure/deviceStorage/index');
+const { getDeviceByTypeAndSerialNumber, storeDevice } = require('../../infrastructure/data');
 
 const action = async (req, res) => {
   const serialNumber = req.params.serial_number;
+  const reason = req.body && req.body.reason ? req.body.reason : null;
 
-  const deviceDetails = await storage.getDigipassDetails(serialNumber, req.header('x-correlation-id'));
-  if (!deviceDetails) {
+  const device = await getDeviceByTypeAndSerialNumber('digipass', serialNumber);
+  if (!device) {
     return res.status(404).contentType('json').send(JSON.stringify({
       message: `No digipass device found with serial number ${serialNumber}`,
     }));
   }
 
-  deviceDetails.deactivated = true;
-
-  if (req.body && req.body.reason) {
-    deviceDetails.deactivatedReason = req.body.reason;
-  }
-
-  await storage.storeDigipassDetails(deviceDetails, req.header('x-correlation-id'));
+  await storeDevice(device.type, device.serialNumber, true, reason);
 
   return res.status(200).send();
 };

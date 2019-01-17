@@ -1,4 +1,5 @@
-const storage = require('../../infrastructure/deviceStorage/index');
+const storage = require('../../infrastructure/deviceStorage');
+const data = require('../../infrastructure/data');
 
 const action = async (req, res) => {
   const devices = req.body.devices;
@@ -13,16 +14,19 @@ const action = async (req, res) => {
     }));
   }
 
-  await Promise.all(devices.map((device) => {
-    return storage.storeDigipassDetails({
+  const correlationId = req.header('x-correlation-id');
+  for (let i = 0; i < devices.length; i += 1) {
+    const device = devices[i];
+    await storage.storeDigipassDetails({
       serialNumber: device.serialNumber,
       secret: device.secret,
       counterPosition: device.counter,
       codeLength: 8,
       unlock1: device.unlock1,
       unlock2: device.unlock2,
-    }, req.header('x-correlation-id'));
-  }));
+    }, correlationId);
+    await data.storeDevice('digipass', device.serialNumber, undefined, undefined);
+  }
 
   return res.status(202).send();
 };
