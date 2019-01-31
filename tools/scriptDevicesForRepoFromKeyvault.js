@@ -1,6 +1,11 @@
 const { getAllDigipass, getDigipassDetails } = require('./../src/infrastructure/deviceStorage');
+const fs = require('fs');
 
 const script = async () => {
+  if (!process.env.OUTPUT_PATH) {
+    throw new Error('No output path specified');
+  }
+
   const correlationId = `scriptDevicesForRepoFromKeyvault-${Date.now()}`;
   console.info('Reading serial numbers');
   const serialNumbers = await getAllDigipass(correlationId);
@@ -16,7 +21,8 @@ const script = async () => {
     sql += `INSERT INTO device (id, type, serialNumber, deactivated, deactivatedReason, createdAt, updatedAt) VALUES (NEWID(), 'digipass', '${details.serialNumber}', ${deactivated}, ${deactivatedReason}, GETDATE(), GETDATE());\n`;
   }
 
-  console.info(sql);
+  fs.writeFileSync(process.env.OUTPUT_PATH, sql, 'utf8');
+  console.info(`Saved to ${process.env.OUTPUT_PATH}`);
 };
 script().then(() => {
   console.info('done');
