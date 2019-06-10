@@ -31,7 +31,7 @@
     "express": "^4.15.4",
     "express-ejs-layouts": "^2.3.1",
     "ioredis": "^3.2.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "login.dfe.api.auth": "github:DFE-Digital/login.dfe.api.auth#v1.0.0",
     "login.dfe.config.schema.common": "git+https://github.com/DFE-Digital/login.dfe.config.schema.common.git#v1.0.1",
     "login.dfe.express-error-handling": "git+https://github.com/DFE-Digital/login.dfe.express-error-handling.git#v1.2",
@@ -50,8 +50,8 @@
     "eslint-config-airbnb-base": "^11.3.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^21.3.2",
-    "jest": "^21.2.1",
-    "jest-cli": "^21.2.1",
+    "jest": "^24.8.0",
+    "jest-cli": "^24.8.0",
     "node-mocks-http": "^1.6.6"
   },
   "jest": {
