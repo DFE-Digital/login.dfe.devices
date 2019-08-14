@@ -44,6 +44,14 @@ app.use(getErrorHandler({
   logger,
 }));
 
+let assetsUrl = config.hostingEnvironment.assetsUrl || 'https://rawgit.com/DFE-Digital/dfe.ui.toolkit/master/dist/';
+assetsUrl = assetsUrl.endsWith('/') ? assetsUrl.substr(0, assetsUrl.length - 1) : assetsUrl;
+Object.assign(app.locals, {
+  urls: {
+    assets: assetsUrl,
+  },
+});
+
 if (config.hostingEnvironment.env === 'dev') {
   app.proxy = true;
 
