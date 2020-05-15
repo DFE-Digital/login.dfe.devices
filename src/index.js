@@ -9,23 +9,11 @@ const path = require('path');
 const digipass = require('./app/digipass/index');
 const healthCheck = require('login.dfe.healthcheck');
 const { getErrorHandler } = require('login.dfe.express-error-handling');
-const KeepAliveAgent = require('agentkeepalive');
 const configSchema = require('./infrastructure/config/schema');
 
 configSchema.validate();
 
-http.GlobalAgent = new KeepAliveAgent({
-  maxSockets: config.hostingEnvironment.agentKeepAlive.maxSockets,
-  maxFreeSockets: config.hostingEnvironment.agentKeepAlive.maxFreeSockets,
-  timeout: config.hostingEnvironment.agentKeepAlive.timeout,
-  keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
-});
-https.GlobalAgent = new KeepAliveAgent({
-  maxSockets: config.hostingEnvironment.agentKeepAlive.maxSockets,
-  maxFreeSockets: config.hostingEnvironment.agentKeepAlive.maxFreeSockets,
-  timeout: config.hostingEnvironment.agentKeepAlive.timeout,
-  keepAliveTimeout: config.hostingEnvironment.agentKeepAlive.keepAliveTimeout,
-});
+https.globalAgent.maxSockets = http.globalAgent.maxSockets = config.hostingEnvironment.agentKeepAlive.maxSockets || 50;
 
 const app = express();
 
