@@ -30,7 +30,7 @@
     "express": "^4.15.4",
     "express-ejs-layouts": "^2.3.1",
     "ioredis": "^3.2.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "login.dfe.api.auth": "github:DFE-Digital/login.dfe.api.auth#v2.0.2",
     "login.dfe.config.schema.common": "git+https://github.com/DFE-Digital/login.dfe.config.schema.common.git#v1.4",
     "login.dfe.express-error-handling": "git+https://github.com/DFE-Digital/login.dfe.express-error-handling.git#v1.2",
