@@ -1,0 +1,44 @@
+jobs:
+- job: Phase_1
+  displayName: Phase 1
+  cancelTimeoutInMinutes: 1
+  pool:
+    vmImage: windows-2019
+  steps:
+  - checkout: config
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\'
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      Contents: >-
+        dev\login.dfe.devices.dev.json
+
+        test\login.dfe.devices.test.json
+
+        pp\login.dfe.devices.pp.json
+
+        pr\login.dfe.devices.pr.json
+
+        edd\login.dfe.devices.edd.json
+
+        int\login.dfe.devices.int.json
+
+        dev\process.json
+
+        test\process.json
+
+        pp\process.json
+
+        pr\process.json
+
+        edd\process.json
+
+        int\process.json
+      TargetFolder: $(Build.ArtifactStagingDirectory)\
+      CleanTargetFolder: true
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: Drop'
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)\
+      ArtifactName: Drop
+...
