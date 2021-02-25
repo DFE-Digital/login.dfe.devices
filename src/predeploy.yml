@@ -4,40 +4,76 @@ jobs:
   cancelTimeoutInMinutes: 1
   pool:
     vmImage: windows-2019
+    demands:
+    - node.js
+    - npm
   steps:
-  - checkout: config
+  - checkout: self
+    clean: true
+  - task: Npm@1
+    displayName: npm install
+    inputs:
+      command: custom
+      workingDir: $(Build.Repository.LocalPath)
+      verbose: true
+      customCommand: install --force --json
+  - task: Npm@1
+    displayName: npm test
+    continueOnError: True
+    inputs:
+      command: custom
+      workingDir: $(Build.Repository.LocalPath)
+      verbose: false
+      customCommand: test --force
+  - task: Npm@1
+    displayName: npm clean up
+    inputs:
+      command: custom
+      workingDir: $(Build.Repository.LocalPath)
+      verbose: false
+      customCommand: prune --production --json
+  - task: Npm@1
+    displayName: npm prune fix
+    inputs:
+      command: custom
+      workingDir: $(Build.Repository.LocalPath)
+      verbose: false
+      customCommand: install --production --json
   - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\'
+    displayName: 'Copy Files to: $(System.DefaultWorkingDirectory)\Publish'
     inputs:
       SourceFolder: $(System.DefaultWorkingDirectory)
       Contents: >-
-        dev\login.dfe.devices.dev.json
+        app_data\**
 
-        test\login.dfe.devices.test.json
+        azure\**
 
-        pp\login.dfe.devices.pp.json
+        config\**
 
-        pr\login.dfe.devices.pr.json
+        node_modules\**
 
-        edd\login.dfe.devices.edd.json
+        src\**
 
-        int\login.dfe.devices.int.json
+        external_modules\**
 
-        dev\process.json
+        package.json
 
-        test\process.json
-
-        pp\process.json
-
-        pr\process.json
-
-        edd\process.json
-
-        int\process.json
-      TargetFolder: $(Build.ArtifactStagingDirectory)\
+        web.config
+      TargetFolder: $(System.DefaultWorkingDirectory)\Publish
       CleanTargetFolder: true
+  - task: ArchiveFiles@1
+    displayName: 'Archive files '
+    inputs:
+      rootFolder: $(System.DefaultWorkingDirectory)\Publish
+      includeRootFolder: false
+  - task: CopyFiles@2
+    displayName: Copy any database scripts
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      Contents: database_scripts\**
+      TargetFolder: $(Build.ArtifactStagingDirectory)\
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: Drop'
+    displayName: Publish Build Artifact
     inputs:
       PathtoPublish: $(Build.ArtifactStagingDirectory)\
       ArtifactName: Drop
