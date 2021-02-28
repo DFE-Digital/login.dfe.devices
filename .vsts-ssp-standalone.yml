@@ -1,0 +1,32 @@
+name: $(BuildDefinitionName)_tag-$(BuildID)_at-$(Date:yyyyMMdd)$(Rev:.r)
+resources:
+  repositories:
+    - repository: devopsTemplates
+      type: github
+      endpoint: DfE-Digital
+      name: DFE-Digital/operations-devops-pipeline-templates
+      ref: master
+    - repository: config
+      type: github
+      endpoint: DfE-Digital
+      name: DFE-Digital/login.dfe.config
+      ref: master
+
+trigger:
+  branches:
+    include:
+    - NSA-3397
+    exclude:
+    - master
+    - release/*
+    - develop
+    - hotfix/*
+
+variables:
+- group: platform-global
+
+stages:
+- template: /Application/node/stages/signin-master-standalone-stage.yml@devopsTemplates
+  parameters:
+    applicationName: devices
+    resourceGroupSuffix: dev
