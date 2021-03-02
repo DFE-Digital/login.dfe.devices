@@ -29,4 +29,5 @@ stages:
 - template: /Application/node/stages/signin-master-standalone-stage.yml@devopsTemplates
   parameters:
     applicationName: devices
-    resourceGroupSuffix: dev
+    resourceGroupSuffix: dev-failover
+    armTemplateName: template-failover.json
