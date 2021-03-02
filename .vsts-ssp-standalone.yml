@@ -28,6 +28,6 @@ variables:
 stages:
 - template: /Application/node/stages/signin-master-standalone-stage.yml@devopsTemplates
   parameters:
-    applicationName: devices
+    applicationName: dev
     resourceGroupSuffix: dev
     armTemplateName: template.json
