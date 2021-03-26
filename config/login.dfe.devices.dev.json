@@ -31,8 +31,8 @@
   },
   "storage": {
     "host": "localhost",
-    "username": "",
-    "password": "",
+    "username": "user-7cbfaf38-ac73-4a0e-8c60-2e30942bef25",
+    "password": "ed4298da-1fa8-4915-a172-433d8d7e6448",
     "dialect": "mssql",
     "name": "devices",
     "encrypt": true,
