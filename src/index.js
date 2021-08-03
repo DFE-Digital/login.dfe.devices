@@ -32,7 +32,7 @@ app.use(getErrorHandler({
   logger,
 }));
 
-let assetsUrl = config.hostingEnvironment.assetsUrl || 'https://rawgit.com/DFE-Digital/dfe.ui.toolkit/master/dist/';
+let assetsUrl = config.assets.url;
 assetsUrl = assetsUrl.endsWith('/') ? assetsUrl.substr(0, assetsUrl.length - 1) : assetsUrl;
 Object.assign(app.locals, {
   urls: {
