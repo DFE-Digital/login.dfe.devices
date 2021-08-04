@@ -79,7 +79,7 @@ const merge = async () => {
 
   for (let i = 0; i < devices.length; i += 1) {
     const device = devices[i];
-    const deviceUnlockCodes = unlockCodes.find(x => x.serialNumber === device.serialNumber);
+    const deviceUnlockCodes = unlockCodes.findByPk(x => x.serialNumber === device.serialNumber);
     if (deviceUnlockCodes) {
       device.unlock1 = deviceUnlockCodes.unlock1;
       device.unlock2 = deviceUnlockCodes.unlock2;
