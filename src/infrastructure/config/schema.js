@@ -79,6 +79,7 @@ const schema = new SimpleSchema({
   storage: schemas.sequelizeConnection,
   secureStorage: secureStorageSchema,
   digipass: digipassSchema,
+  assets: schemas.assets,
 });
 
 module.exports.validate = () => {
