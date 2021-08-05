@@ -59,8 +59,7 @@ typings/
 .env
 
 # Dev env
-/config/
-!/config/login.dfe.devices.dev.json
+config/*
 
 .idea/workspace.xml
 .idea/watcherTasks.xml
@@ -69,3 +68,5 @@ tools/settings.json
 \.idea/markdown-navigator/
 
 \.idea/markdown-navigator\.xml
+
+.vscode/
