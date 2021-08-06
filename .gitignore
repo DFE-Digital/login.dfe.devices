@@ -69,3 +69,6 @@ tools/settings.json
 \.idea/markdown-navigator/
 
 \.idea/markdown-navigator\.xml
+
+
+.vscode
