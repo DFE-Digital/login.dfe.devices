@@ -41,6 +41,7 @@ typings/
 
 # Optional npm cache directory
 .npm
+.npmrc
 
 # Optional eslint cache
 .eslintcache
@@ -68,3 +69,6 @@ tools/settings.json
 \.idea/markdown-navigator/
 
 \.idea/markdown-navigator\.xml
+
+
+.vscode

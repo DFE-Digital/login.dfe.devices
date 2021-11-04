@@ -22,7 +22,7 @@ const listDevices = async (type, pageNumber, pageSize) => {
 };
 
 const getDeviceByTypeAndSerialNumber = async (type, serialNumber) => {
-  const entity = await devices.find({
+  const entity = await devices.findOne({
     where: {
       type: {
         [Op.eq]: type,
@@ -36,7 +36,7 @@ const getDeviceByTypeAndSerialNumber = async (type, serialNumber) => {
 };
 
 const storeDevice = async (type, serialNumber, deactivated, deactivatedReason) => {
-  const entity = await devices.find({
+  const entity = await devices.findOne({
     where: {
       type: {
         [Op.eq]: type,
