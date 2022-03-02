@@ -1,7 +1,7 @@
 const { devices } = require('./repository');
 const { Op } = require('sequelize');
 const { mapDeviceEntity, mapDeviceEntities } = require('./mappers');
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 
 const listDevices = async (type, pageNumber, pageSize) => {
   const resultset = await devices.findAndCountAll({
