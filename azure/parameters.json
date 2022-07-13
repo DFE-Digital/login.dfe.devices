@@ -37,6 +37,9 @@
         },
         "appServiceConfigPath": {
             "value": ""
+        },
+        "http20Enabled": {
+            "value": true
         }
     }
 }
