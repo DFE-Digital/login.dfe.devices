@@ -97,18 +97,6 @@
             "metadata": {
                 "description": "Enable Route All to send all traffic through the virtual network"
             }
-        },
-        "gatewayVnetRg": {
-            "type": "string",
-            "metadata": {
-                "description": "Gateway virtual network resource group"
-            }
-        },
-        "gatewayVnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Gateway virtual network name"
-            }
         }
     },
     "variables": {
